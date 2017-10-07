@@ -1,6 +1,6 @@
-# tutorial
+# sina
 
 ```
-scrapy startproject tutorial
-scrapy crawl quotes
+scrapy startproject sina
+scrapy crawl sinaspider
 ```
