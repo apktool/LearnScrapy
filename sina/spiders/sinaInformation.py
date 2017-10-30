@@ -4,7 +4,7 @@ from sina.items import InformationItem
 
 
 class SinaSpider(scrapy.Spider):
-    name = "sinaspider"
+    name = "sinaInformation"
 
     def start_requests(self):
         urls = [
@@ -35,7 +35,7 @@ class SinaSpider(scrapy.Spider):
         info_items['nickname'] = meta_data.get('昵称')
         info_items['authorization'] = meta_data.get('微博认证')
         info_items['label'] = meta_data.get('标签')
-        info_items['gender'] = meta_data.get('性别') 
+        info_items['gender'] = meta_data.get('性别')
         info_items['place'] = meta_data.get('所在地')
         info_items['profile'] = meta_data.get('简介')
         info_items['school'] = meta_data.get('学校')
