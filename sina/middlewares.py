@@ -8,6 +8,7 @@
 import random
 from scrapy import signals
 from .useragent import agents
+from .cookies import cookies
 
 
 class LearnscrapySpiderMiddleware(object):
@@ -65,4 +66,6 @@ class UserAgentMiddleware(object):
 
 
 class CookiesMiddleware(object):
-    pass
+    def process_request(self, request, spider):
+        cookie = random.choice(cookies)
+        request.cookie = cookie
