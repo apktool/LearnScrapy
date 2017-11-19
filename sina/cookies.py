@@ -146,6 +146,3 @@ def get_cookies():
         cookies.append(s.cookies.get_dict())
 
     return cookies
-
-
-cookies = get_cookies()
