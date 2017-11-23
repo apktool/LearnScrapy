@@ -8,6 +8,7 @@ import base64
 import hashlib
 import binascii
 import rsa
+import re
 
 s = requests.session()
 
@@ -122,6 +123,14 @@ def login3(content):
     return response
 
 
+def login_cn():
+    url = 'https://weibo.cn'
+    body = s.get(url).text
+    addr = re.search(r'replace\("(.*?)"\);', body).group(1)
+    response = s.get(url=addr)
+    return response
+
+
 def get_cookies():
     cookies = []
     for item in weibo:
@@ -131,6 +140,7 @@ def get_cookies():
         timestamp = str(int(time.time()*1000))
 
         data = pre_login(username, timestamp)
+        print(data)
 
         # password = set_password(item.get('psw'), timestamp, nonce)
         password = get_sp(item.get('psw'), data)
@@ -143,6 +153,11 @@ def get_cookies():
         response_3 = login3(response)
         print(response_3.status_code)
 
+        response_cn = login_cn()
+        print(response_cn.status_code)
+
         cookies.append(s.cookies.get_dict())
 
     return cookies
+
+get_cookies()
