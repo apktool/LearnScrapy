@@ -1,5 +1,5 @@
 import scrapy
-from sina.items import HomePageItem
+from sina.items import HomePageItem, HomePageInfoItem
 from scrapy.selector import Selector
 
 
@@ -13,13 +13,19 @@ class SinaSpider(scrapy.Spider):
 
     def parse_home(self, response):
         self.logger.info('Parse function called on %s', response.url)
-        print(response.request.headers)
-        print(response.headers)
+        # print(response.request.headers)
+        # print(response.headers)
         with open('a.html', 'wb') as f:
             f.write(response.body)
 
-        info = response.selector.xpath('//div[@class="ut"]').extract()[0]
-        print(info)
+        info = response.selector.xpath('//div[@class="tip2"]/a/text()').extract()
+
+        home_info_item = HomePageInfoItem()
+        home_info_item['weibo_count'] = info[0]
+        home_info_item['notic_count'] = info[1]
+        home_info_item['follower_count'] = info[2]
+        home_info_item['at_count'] = info[3]
+
         weibo_unit = response.selector.xpath('//div[@class="c"]').extract()
         with open('b.html', 'a') as f:
             for item in weibo_unit:
@@ -70,3 +76,4 @@ class SinaSpider(scrapy.Spider):
 
             home_item['at_people'] = Selector(text=body).xpath('//a/text()').re('@\S+')
             yield home_item
+        yield home_info_item

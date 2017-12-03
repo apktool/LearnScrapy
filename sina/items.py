@@ -39,6 +39,13 @@ class HomePageItem(Item):
     at_people = Field()
 
 
+class HomePageInfoItem(Item):
+    weibo_count = Field()
+    notic_count = Field()
+    follower_count = Field()
+    at_count = Field()
+
+
 class InformationItem(Item):
     _id = Field()
     nickname = Field()
