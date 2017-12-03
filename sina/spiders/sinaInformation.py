@@ -18,7 +18,15 @@ class SinaSpider(scrapy.Spider):
         with open('a.html', 'wb') as f:
             f.write(response.body)
 
-        info = response.selector.xpath('//div[@class="tip2"]/a/text()').extract()
+        info_name = response.selector.xpath('//div[@class="tip2"]/a/text()').extract()
+        info_link = response.selector.xpath('//div[@class="tip2"]/a/@href').extract()
+        info = list()
+
+        for i in range(len(info_name)):
+            temp = list()
+            temp.append(info_name[i])
+            temp.append(info_link[i])
+            info.append(temp)
 
         home_info_item = HomePageInfoItem()
         home_info_item['weibo_count'] = info[0]
