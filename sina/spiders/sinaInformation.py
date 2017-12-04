@@ -18,6 +18,16 @@ class SinaSpider(scrapy.Spider):
         with open('a.html', 'wb') as f:
             f.write(response.body)
 
+        # 个人首页 | 微博, 关注, 粉丝, @我的
+        home_info_item = self.storage_home_info(response)
+        yield home_info_item
+
+        # 个人首页 | 博主，内容，评论，转发...
+        home_item = self.home_entry_storage(response)
+        yield home_item
+
+    def storage_home_info(self, response):
+
         info_name = response.selector.xpath('//div[@class="tip2"]/a/text()').extract()
         info_link = response.selector.xpath('//div[@class="tip2"]/a/@href').extract()
         info = list()
@@ -34,6 +44,9 @@ class SinaSpider(scrapy.Spider):
         home_info_item['follower_count'] = info[2]
         home_info_item['at_count'] = info[3]
 
+        return home_info_item
+
+    def home_entry_storage(self, response):
         weibo_unit = response.selector.xpath('//div[@class="c"]').extract()
         with open('b.html', 'a') as f:
             for item in weibo_unit:
@@ -83,5 +96,4 @@ class SinaSpider(scrapy.Spider):
                 home_item['detail'] = Selector(text=body).xpath('//span[@class="ctt"]/a/@href').extract()[-1]
 
             home_item['at_people'] = Selector(text=body).xpath('//a/text()').re('@\S+')
-            yield home_item
-        yield home_info_item
+            return home_item
