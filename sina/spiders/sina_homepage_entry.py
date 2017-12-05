@@ -4,7 +4,7 @@ from scrapy.selector import Selector
 
 
 class SinaSpider(scrapy.Spider):
-    name = "sinaInformation"
+    name = "sinaHomeEntry"
     host = 'https://weibo.cn/'
 
     def start_requests(self):
