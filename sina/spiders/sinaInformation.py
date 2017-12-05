@@ -23,7 +23,7 @@ class SinaSpider(scrapy.Spider):
         yield home_info_item
 
         # 个人首页 | 博主，内容，评论，转发...
-        home_item = self.home_entry_storage(response)
+        home_item = self.storage_home_entry(response)
         yield home_item
 
     def storage_home_info(self, response):
@@ -46,7 +46,7 @@ class SinaSpider(scrapy.Spider):
 
         return home_info_item
 
-    def home_entry_storage(self, response):
+    def storage_home_entry(self, response):
         weibo_unit = response.selector.xpath('//div[@class="c"]').extract()
         with open('b.html', 'a') as f:
             for item in weibo_unit:
