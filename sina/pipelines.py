@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from pymongo import MongoClient
-from .items import HomePageItem, HomePageInfoItem, InformationItem
+from .items import HomePageItem, HomePageInfoItem, PersonalInfoItem
 
 
 class MongoDBPipeline(object):
@@ -14,7 +14,7 @@ class MongoDBPipeline(object):
         db = client['Sina']
         self.HomePageItem = db['HomePageItem']
         self.HomePageInfoItem = db['HomePageInfoItem']
-        self.InformationItem = db['InformationItem']
+        self.PersonalInfoItem= db['PersonalInfoItem']
 
     def process_item(self, item, spider):
         if isinstance(item, HomePageItem):
@@ -31,11 +31,11 @@ class MongoDBPipeline(object):
             except Exception:
                 print('HomePageInfoItem is insert Failed')
 
-        if isinstance(item, InformationItem):
+        if isinstance(item, PersonalInfoItem):
             try:
-                self.InformationItem.insert_one(dict(item))
+                self.PersonalInfoItem.insert_one(dict(item))
                 print('Insert Successfuly')
             except Exception:
-                print('InformationItem is insert Failed')
+                print('PersonalInfoItem is insert Failed')
 
         return item

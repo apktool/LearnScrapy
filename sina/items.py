@@ -46,16 +46,20 @@ class HomePageInfoItem(Item):
     at_count = Field()
 
 
-class InformationItem(Item):
+class PersonalInfoItem(Item):
     _id = Field()
     nickname = Field()
+    level = Field()
     authorization = Field()
-    label = Field()
     gender = Field()
     place = Field()
+    birthday = Field()
+    sexual_orientation = Field()
+    authorization_info = Field()
     profile = Field()
-    school = Field()
-    blog = Field()
-    level = Field()
-    credit = Field()
-    register = Field()
+    label = Field()
+    pc_version = Field()
+    mobile_version = Field()
+    setting = Field()
+
+    other = Field()
