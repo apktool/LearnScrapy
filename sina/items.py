@@ -48,18 +48,7 @@ class HomePageInfoItem(Item):
 
 class PersonalInfoItem(Item):
     _id = Field()
-    nickname = Field()
-    level = Field()
-    authorization = Field()
-    gender = Field()
-    place = Field()
-    birthday = Field()
-    sexual_orientation = Field()
-    authorization_info = Field()
-    profile = Field()
-    label = Field()
-    pc_version = Field()
-    mobile_version = Field()
-    setting = Field()
-
-    other = Field()
+    tabs_info = Field()
+    user_info = Field()
+    fans_scheme = Field()
+    follow_scheme = Field()
