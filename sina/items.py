@@ -58,3 +58,15 @@ class PersonalWeiboItem(Item):
     card_list_info = Field()
     cards = Field()
     ok = Field()
+
+class PersonalFollowItem(Item):
+    _id = Field()
+    card_list_info = Field()
+    cards = Field()
+    ok = Field()
+
+class PersonalFollowerItem(Item):
+    _id = Field()
+    card_list_info = Field()
+    cards = Field()
+    ok = Field()

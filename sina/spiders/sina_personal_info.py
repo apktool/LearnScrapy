@@ -1,5 +1,5 @@
 import scrapy
-from sina.items import PersonalInfoItem, PersonalWeiboItem
+from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem
 from sina.weibo_id import weibo_id
 from urllib.parse import urlencode
 import json
@@ -58,3 +58,45 @@ class SinaSpider(scrapy.Spider):
         personal_info_item['fans_scheme'] = jsonresponse.get('data').get('fans_scheme')
         personal_info_item['follow_scheme'] = jsonresponse.get('data').get('follow_scheme')
         yield personal_info_item
+
+        # 粉丝
+        followers_count = jsonresponse.get('data').get('userInfo').get('followers_count')
+        for i in range(1, int(followers_count/20 + 1)):
+            url_follower = personal_info_item['fans_scheme']
+            url_follower = url_follower.replace('https://m.weibo.cn/p/index?', self.url)
+            url_follower = url_follower.replace('fansrecomm', 'fans')
+            url_follower = url_follower + '&since_id=%d' % i
+            yield scrapy.Request(url=url_follower, meta={'uid': personal_info_item['_id']}, callback=self.parse_personal_follower)
+
+        # 关注
+        follow_count = jsonresponse.get('data').get('userInfo').get('follow_count')
+        for i in range(1, int(follow_count/20 + 1)):
+            url_follow = personal_info_item['follow_scheme']
+            url_follow = url_follow.replace('https://m.weibo.cn/p/index?', self.url)
+            url_follow = url_follow.replace('followersrecomm', 'followers')
+            url_follow = url_follow + '&page=%d' % i
+            yield scrapy.Request(url=url_follow, meta={'uid': personal_info_item['_id']}, callback=self.parse_personal_follow)
+
+    def parse_personal_follower(self, response):
+        self.logger.info('Parse function called on %s', response.url)
+
+        jsonresponse = json.loads(response.body_as_unicode())
+        personal_follower_item = PersonalFollowerItem()
+        personal_follower_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        personal_follower_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
+        personal_follower_item['cards'] = jsonresponse.get('data').get('cards')
+        personal_follower_item['ok'] = jsonresponse.get('data').get('ok')
+
+        yield personal_follower_item
+
+    def parse_personal_follow(self, response):
+        self.logger.info('Parse function called on %s', response.url)
+
+        jsonresponse = json.loads(response.body_as_unicode())
+        personal_follow_item = PersonalFollowItem()
+        personal_follow_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        personal_follow_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
+        personal_follow_item['cards'] = jsonresponse.get('data').get('cards')
+        personal_follow_item['ok'] = jsonresponse.get('data').get('ok')
+
+        yield personal_follow_item
