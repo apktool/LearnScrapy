@@ -55,7 +55,7 @@ COOKIES_DEBUG = True
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'sina.middlewares.UserAgentMiddleware': 401,
-    'sina.middlewares.CookiesMiddleware': 402,
+#    'sina.middlewares.CookiesMiddleware': 402,
 }
 
 # Enable or disable extensions
@@ -90,3 +90,5 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+MONGO_URI = 'mongodb://localhost:27017/'
+MONGO_DATABASE = 'Sina'
