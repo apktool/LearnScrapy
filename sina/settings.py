@@ -92,3 +92,5 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'Sina'
+LOG_LEVEL = 'DEBUG'
+LOG_FILE ='log.txt'

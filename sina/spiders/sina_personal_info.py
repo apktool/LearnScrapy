@@ -22,7 +22,7 @@ class SinaSpider(scrapy.Spider):
             self.params['value'] = uid
 
             self.params['containerid'] = '107603%d' % uid
-            for page in range(10):
+            for page in range(1, 10):
                 url = self.url + urlencode(self.params) + '&page=%d' % page
                 yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_weibo)
 
