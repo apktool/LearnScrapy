@@ -1,26 +1,22 @@
 import scrapy
-from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem
+from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalInfoDetailItem
 from sina.weibo_id import weibo_id
-from urllib.parse import urlencode
+from urllib.parse import urlencode, quote
 import json
 
 
 class SinaSpider(scrapy.Spider):
     name = "sinaPersonalInfo"
     url = 'https://m.weibo.cn/api/container/getIndex?'
-    params = {
-            'uid': '',
-            'luicode': '20000174',
-            'type': 'uid',
-            'value': '',
-            'containerid': ''
-            }
+    params = dict()
 
     def start_requests(self):
         for uid in weibo_id:
+            self.params.clear()
+            self.params['luicode'] = '20000174'
+            self.params['type'] = 'uid'
             self.params['uid'] = uid
             self.params['value'] = uid
-
             self.params['containerid'] = '107603%d' % uid
             for page in range(1, 10):
                 url = self.url + urlencode(self.params) + '&page=%d' % page
@@ -29,6 +25,15 @@ class SinaSpider(scrapy.Spider):
             self.params['containerid'] = '100505%d' % uid
             url = self.url + urlencode(self.params)
             yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_info)
+
+            self.params.clear()
+            self.params['containerid'] = '230283%d' % uid + '_-_INFO'
+            self.params['title'] = quote('基本信息')
+            self.params['luicode'] = '10000011'
+            self.params['lfid'] = '230283%d' % uid
+            self.params['featurecode'] = '20000320'
+            url = self.url + urlencode(self.params)
+            yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_info_detail)
 
     def parse_personal_weibo(self, response):
         self.logger.info('Parse function called on %s', response.url)
@@ -44,6 +49,16 @@ class SinaSpider(scrapy.Spider):
 
         if personal_weibo_item['ok'] == 1:
             yield personal_weibo_item
+
+    def parse_personal_info_detail(self, response):
+        self.logger.info('Parse function called on %s', response.url)
+        jsonresponse = json.loads(response.body_as_unicode())
+        personal_info_detial_item = PersonalInfoDetailItem()
+        personal_info_detial_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        personal_info_detial_item['ok'] = jsonresponse.get('ok')
+        personal_info_detial_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
+        personal_info_detial_item['cards'] = jsonresponse.get('data').get('cards')
+        yield personal_info_detial_item
 
     def parse_personal_info(self, response):
         self.logger.info('Parse function called on %s', response.url)
