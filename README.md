@@ -8,5 +8,5 @@ scrapy crawl sinaspider
 # 更改spider名称
 
 ```
-scrapy crawl sinaHomeEntry
+scrapy crawl sinaPersonalInfo
 ```
