@@ -1,17 +1,20 @@
 import scrapy
+from scrapy_redis.spiders import RedisSpider
 from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalInfoDetailItem
 from sina.weibo_id import weibo_id
 from urllib.parse import urlencode, quote
 import json
 
 
-class SinaSpider(scrapy.Spider):
+class SinaSpider(RedisSpider):
     name = "sinaPersonalInfo"
+    redis_key = 'sina_personal_info:start_urls'
+    start_urls = list(set(weibo_id))
     url = 'https://m.weibo.cn/api/container/getIndex?'
     params = dict()
 
     def start_requests(self):
-        for uid in weibo_id:
+        for uid in self.start_urls:
             self.params.clear()
             self.params['luicode'] = '20000174'
             self.params['type'] = 'uid'

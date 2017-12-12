@@ -68,6 +68,7 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'sina.pipelines.MongoDBPipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 400,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -94,3 +95,7 @@ MONGO_URI = 'mongodb://localhost:27017/'
 MONGO_DATABASE = 'Sina'
 LOG_LEVEL = 'DEBUG'
 LOG_FILE ='log.txt'
+
+SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
+DUPEFILTER_CLASS = 'scrapy_redis.dupefilter.RFPDupeFilter'
+SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
