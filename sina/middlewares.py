@@ -8,6 +8,7 @@
 import random
 from scrapy import signals
 from .useragent import agents
+from .ip_proxy import ips
 
 
 class LearnscrapySpiderMiddleware(object):
@@ -67,3 +68,9 @@ class UserAgentMiddleware(object):
 class CookiesMiddleware(object):
     def process_request(self, request, spider):
         pass
+
+
+class ProxyMiddleware(object):
+    def process_request(self, request, spider):
+        ip = random.choice(ips)
+        request.meta["proxy"] = ip

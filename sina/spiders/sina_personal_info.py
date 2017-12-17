@@ -57,7 +57,7 @@ class SinaSpider(RedisSpider):
         self.logger.info('Parse function called on %s', response.url)
         jsonresponse = json.loads(response.body_as_unicode())
         personal_info_detial_item = PersonalInfoDetailItem()
-        personal_info_detial_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        personal_info_detial_item['_id'] = str(response.meta.get('uid'))
         personal_info_detial_item['ok'] = jsonresponse.get('ok')
         personal_info_detial_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
         personal_info_detial_item['cards'] = jsonresponse.get('data').get('cards')

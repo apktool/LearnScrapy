@@ -56,6 +56,7 @@ COOKIES_DEBUG = True
 DOWNLOADER_MIDDLEWARES = {
     'sina.middlewares.UserAgentMiddleware': 401,
 #    'sina.middlewares.CookiesMiddleware': 402,
+    'sina.middlewares.ProxyMiddleware': 403
 }
 
 # Enable or disable extensions
@@ -91,7 +92,7 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-MONGO_URI = 'mongodb://localhost:27017/'
+MONGO_URI = 'mongodb://192.168.110.188:27017/'
 MONGO_DATABASE = 'Sina'
 LOG_LEVEL = 'DEBUG'
 LOG_FILE ='log.txt'
@@ -99,3 +100,4 @@ LOG_FILE ='log.txt'
 SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
 DUPEFILTER_CLASS = 'scrapy_redis.dupefilter.RFPDupeFilter'
 SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
+REDIS_URL = 'redis://li:redis@192.168.110.188:6379'

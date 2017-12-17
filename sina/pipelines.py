@@ -72,48 +72,48 @@ class MongoDBPipeline(object):
         if isinstance(item, HomePageInfoItem):
             try:
                 self.db['HomePageInfoItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('HomePageInfoItem is inserted Successfuly')
             except Exception:
-                print('HomePageInfoItem is insert Failed')
+                print('HomePageInfoItem is inserted Failed')
 
         if isinstance(item, PersonalInfoItem):
             try:
                 self.db['PersonalInfoItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('PersonalInfoItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalInfoItem is insert Failed')
+                print('PersonalInfoItem is inserted Failed')
 
         if isinstance(item, PersonalInfoDetailItem):
             try:
                 self.db['PersonalInfoDetailItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('PersonalInfoDetailItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalInfoDetailItem is insert Failed')
+                print('PersonalInfoDetailItem is inserted Failed')
 
         if isinstance(item, PersonalWeiboItem):
             try:
                 self.db['PersonalWeiboItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('PersonalWeiboItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalWeiboItem is insert Failed')
+                print('PersonalWeiboItem is inserted Failed')
 
         if isinstance(item, PersonalFollowItem):
             try:
                 self.db['PersonalFollowItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('PersonalFollowItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalFollowItem is insert Failed')
+                print('PersonalFollowItem is inserted Failed')
 
         if isinstance(item, PersonalFollowerItem):
             try:
                 self.db['PersonalFollowerItem'].insert_one(dict(item))
-                print('Insert Successfuly')
+                print('PersonalFollowerItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalFollowerItem is insert Failed')
+                print('PersonalFollowerItem is inserted Failed')
 
         return item
