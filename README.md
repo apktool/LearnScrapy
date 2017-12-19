@@ -19,3 +19,19 @@ bind 0.0.0.0
 
 /etc/mongod.conf
 bindIp: 0.0.0.0
+
+# 必须安装的组件
+
+mongodb mongodb-server
+redis
+
+# 必须重新启动的服务
+
+mongod
+redis
+
+# centos 安装python3,pip
+
+https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7
+
+iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
