@@ -30,6 +30,13 @@ redis
 mongod
 redis
 
+# centos 安装python3,pip
+
+https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7
+
+iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
+
 # IP 代理
 
 [proxy_pool](https://github.com/lujqme/proxy_pool.git)
+
