@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from pymongo import MongoClient
-from .items import HomePageItem, HomePageInfoItem, PersonalInfoItem, PersonalInfoDetailItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem
+from .items import HomePageItem, HomePageInfoItem, PersonalInfoItem, PersonalProfileItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem
 import pymongo
 
 
@@ -84,13 +84,13 @@ class MongoDBPipeline(object):
                 print(e.with_traceback)
                 print('PersonalInfoItem is inserted Failed')
 
-        if isinstance(item, PersonalInfoDetailItem):
+        if isinstance(item, PersonalProfileItem):
             try:
-                self.db['PersonalInfoDetailItem'].insert_one(dict(item))
-                print('PersonalInfoDetailItem is inserted Successfuly')
+                self.db['PersonalProfileItem'].insert_one(dict(item))
+                print('PersonalProfileItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalInfoDetailItem is inserted Failed')
+                print('PersonalProfileItem is inserted Failed')
 
         if isinstance(item, PersonalWeiboItem):
             try:

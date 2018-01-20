@@ -1,6 +1,6 @@
 import scrapy
 from scrapy_redis.spiders import RedisSpider
-from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalInfoDetailItem
+from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalProfileItem
 from sina.weibo_id import weibo_id
 from urllib.parse import urlencode, quote
 import json
@@ -36,7 +36,7 @@ class SinaSpider(RedisSpider):
             self.params['lfid'] = '230283%d' % uid
             self.params['featurecode'] = '20000320'
             url = self.url + urlencode(self.params)
-            yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_info_detail)
+            yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_profile)
 
     def parse_personal_weibo(self, response):
         self.logger.info('Parse function called on %s', response.url)
@@ -53,15 +53,15 @@ class SinaSpider(RedisSpider):
         if personal_weibo_item['ok'] == 1:
             yield personal_weibo_item
 
-    def parse_personal_info_detail(self, response):
+    def parse_personal_profile(self, response):
         self.logger.info('Parse function called on %s', response.url)
         jsonresponse = json.loads(response.body_as_unicode())
-        personal_info_detial_item = PersonalInfoDetailItem()
-        personal_info_detial_item['_id'] = str(response.meta.get('uid'))
-        personal_info_detial_item['ok'] = jsonresponse.get('ok')
-        personal_info_detial_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
-        personal_info_detial_item['cards'] = jsonresponse.get('data').get('cards')
-        yield personal_info_detial_item
+        personal_profile_item = PersonalProfileItem()
+        personal_profile_item['_id'] = str(response.meta.get('uid'))
+        personal_profile_item['ok'] = jsonresponse.get('ok')
+        personal_profile_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
+        personal_profile_item['cards'] = jsonresponse.get('data').get('cards')
+        yield personal_profile_item
 
     def parse_personal_info(self, response):
         self.logger.info('Parse function called on %s', response.url)
