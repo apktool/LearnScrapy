@@ -53,7 +53,7 @@ class PersonalInfoItem(Item):
     fans_scheme = Field()
     follow_scheme = Field()
 
-class PersonalInfoDetailItem(Item):
+class PersonalProfileItem(Item):
     _id = Field()
     card_list_info = Field()
     cards = Field()
@@ -63,6 +63,12 @@ class PersonalWeiboItem(Item):
     _id = Field()
     card_list_info = Field()
     cards = Field()
+    ok = Field()
+
+class PersonalWeiboCommentItem(Item):
+    _id = Field()
+    msg = Field()
+    data = Field()
     ok = Field()
 
 class PersonalFollowItem(Item):

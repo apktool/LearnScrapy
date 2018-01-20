@@ -1,6 +1,6 @@
 import scrapy
 from scrapy_redis.spiders import RedisSpider
-from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalProfileItem
+from sina.items import PersonalInfoItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalProfileItem, PersonalWeiboCommentItem
 from sina.weibo_id import weibo_id
 from urllib.parse import urlencode, quote
 import json
@@ -45,13 +45,32 @@ class SinaSpider(RedisSpider):
 
         jsonresponse = json.loads(response.body_as_unicode())
         personal_weibo_item = PersonalWeiboItem()
-        personal_weibo_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        uid = str(response.meta.get('uid'))
+        personal_weibo_item['_id'] = uid + '#' + str(response.url.split('=')[-1])
         personal_weibo_item['ok'] = jsonresponse.get('ok')
         personal_weibo_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
         personal_weibo_item['cards'] = jsonresponse.get('data').get('cards')
 
         if personal_weibo_item['ok'] == 1:
+            for item in personal_weibo_item['cards']:
+                mid = item.get('mblog').get('mid')
+                for page in range(10):
+                    comment_url = 'https://m.weibo.cn/api/comments/show?id=' + mid + '&page=' + str(page)
+                    yield scrapy.Request(url=comment_url, meta={'uid_mid': uid + '#' + mid}, callback=self.parse_personal_weibo_comment)
+
             yield personal_weibo_item
+
+    def parse_personal_weibo_comment(self, response):
+        self.logger.info('Parse function called on %s', response.url)
+
+        jsonresponse = json.loads(response.body_as_unicode())
+        personal_weibo_comment_item = PersonalWeiboCommentItem()
+        personal_weibo_comment_item['_id'] = str(response.meta.get('uid_mid')) + '#' + str(response.url.split('=')[-1])
+        personal_weibo_comment_item['msg'] = jsonresponse.get('msg')
+        personal_weibo_comment_item['data'] = jsonresponse.get('data')
+        personal_weibo_comment_item['ok'] = jsonresponse.get('ok')
+        yield personal_weibo_comment_item
+
 
     def parse_personal_profile(self, response):
         self.logger.info('Parse function called on %s', response.url)
