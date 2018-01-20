@@ -19,3 +19,13 @@ bind 0.0.0.0
 
 /etc/mongod.conf
 bindIp: 0.0.0.0
+
+# 必须安装的组件
+
+mongodb mongodb-server
+redis
+
+# 必须重新启动的服务
+
+mongod
+redis
