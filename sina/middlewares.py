@@ -6,6 +6,7 @@
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 import random
+import requests
 from pymongo import MongoClient
 from scrapy import signals
 from .useragent import agents
@@ -73,11 +74,8 @@ class CookiesMiddleware(object):
 
 class ProxyMiddleware(object):
     def process_request(self, request, spider):
-        url = spider.settings.get('MONGO_URI')
-        collection = MongoClient(url).proxy.proxys
-        for item in collection.find():
-            proxy = item.get('protocol').lower() + '://' + item.get('ip') + ':' + item.get('port')
-            ips.append(proxy)
-        
+        s = requests.session()
+        ips = s.get('http://192.168.99.91:8000').json()
         ip = random.choice(ips)
+        ip = 'http://' + ip[0] + ':' + str(ip[1])
         request.meta['proxy'] = ip

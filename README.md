@@ -38,5 +38,4 @@ iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
 
 # IP 代理
 
-[proxy_pool](https://github.com/lujqme/proxy_pool.git)
-
+[IPProxyPool](https://github.com/qiyeboy/IPProxyPool.git)
