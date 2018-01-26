@@ -39,3 +39,11 @@ iptables -I INPUT -p tcp --dport 6379 -j ACCEPT
 # IP 代理
 
 [IPProxyPool](https://github.com/qiyeboy/IPProxyPool.git)
+
+# 运行命令
+
+```bash
+python3 launch.py --run start
+python3 launch.py --run stop
+python3 launch.py --run restart
+```
