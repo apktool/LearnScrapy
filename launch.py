@@ -7,24 +7,33 @@ parser = argparse.ArgumentParser(
         description='The operation releated to scrapy')
 
 group_start = parser.add_argument_group('Start Scrapy')
-group_start.add_argument('--run', action='store',
-        dest='run_value',
-        help='Start scrapy for sina spider')
+group_start.add_argument('--start', action='store',
+        dest='start_spider',
+        help='sinaPersonalInfo')
+
+group_start.add_argument('--stop', action='store',
+        dest='stop_spider',
+        help='Stop scrapy specified for sina spider')
+
+group_start.add_argument('--restart', action='store',
+        dest='restart_spider',
+        help='Restart scrapy specified for sina spider')
+
 args = parser.parse_args()
 pid_file = os.path.join(os.getcwd(), 'scrapy.pid')
 
 
-def start():
+def start(spider):
     open(pid_file, 'w').write(str(os.getpid()))
-    start_cmd = 'scrapy crawl sinaPersonalInfo'
-    print('Scrapy have been boot, Wait for a minute')
+    start_cmd = 'scrapy crawl ' + spider
+    print('Scrapy->[{}]have been boot, Wait for a minute'.format(spider))
     cmdline.execute(start_cmd.split())
 
 
 def start_all():
     open(pid_file, 'w').write(str(os.getpid()))
     start_cmd = 'scrapy crawlall'
-    print('Scrapy have been boot, Wait for a minute')
+    print('All Scrapy have been boot, Wait for a minute')
     cmdline.execute(start_cmd.split())
 
 
@@ -40,12 +49,17 @@ def stop():
 
 
 if __name__ == '__main__':
-    if args.run_value == 'start':
-        start()
-    if args.run_value == 'startall':
+    if args.start_spider == 'all':
         start_all()
-    if args.run_value == 'stop':
+    elif args.start_spider is not None:
+        start(args.start_spider)
+
+    if args.stop_spider is not None:
         stop()
-    if args.run_value == 'restart':
+
+    if args.restart_spider == 'all':
         stop()
-        start()
+        start_all()
+    elif args.restart_spider is not None:
+        stop()
+        start(args.restart_spider)
