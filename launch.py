@@ -21,6 +21,13 @@ def start():
     cmdline.execute(start_cmd.split())
 
 
+def start_all():
+    open(pid_file, 'w').write(str(os.getpid()))
+    start_cmd = 'scrapy crawlall'
+    print('Scrapy have been boot, Wait for a minute')
+    cmdline.execute(start_cmd.split())
+
+
 def stop():
     with open(pid_file, 'r') as f:
         pid = f.read()
@@ -35,6 +42,8 @@ def stop():
 if __name__ == '__main__':
     if args.run_value == 'start':
         start()
+    if args.run_value == 'startall':
+        start_all()
     if args.run_value == 'stop':
         stop()
     if args.run_value == 'restart':

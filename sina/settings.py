@@ -103,3 +103,5 @@ SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
 REDIS_URL = 'redis://li:redis@192.168.110.188:6379'
 
 IP_PROXY_URL = 'http://192.168.99.175:8000'
+
+COMMANDS_MODULE = 'sina.commands'
