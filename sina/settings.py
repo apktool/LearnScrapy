@@ -56,7 +56,8 @@ COOKIES_DEBUG = True
 DOWNLOADER_MIDDLEWARES = {
     'sina.middlewares.UserAgentMiddleware': 401,
 #    'sina.middlewares.CookiesMiddleware': 402,
-    'sina.middlewares.ProxyMiddleware': 403
+    'sina.middlewares.ProxyMiddleware': 403,
+#    'sina.monitor.statscol.StatcollectorMiddleware': 404
 }
 
 # Enable or disable extensions
@@ -68,8 +69,9 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'sina.pipelines.MongoDBPipeline': 300,
-    'scrapy_redis.pipelines.RedisPipeline': 400,
+    'sina.pipelines.MongoDBPipeline': 301,
+    'scrapy_redis.pipelines.RedisPipeline': 302,
+#    'sina.monitor.statscol.SpiderRunStatspipeline': 303
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -92,16 +94,21 @@ ITEM_PIPELINES = {
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
-MONGO_URI = 'mongodb://192.168.110.188:27017/'
-MONGO_DATABASE = 'Sina'
+MONGO_URI = 'mongodb://192.168.99.91:27017/'
+MONGO_DATABASE = 'temp'
 LOG_LEVEL = 'DEBUG'
 LOG_FILE ='log.txt'
 
 SCHEDULER = 'scrapy_redis.scheduler.Scheduler'
 DUPEFILTER_CLASS = 'scrapy_redis.dupefilter.RFPDupeFilter'
 SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
-REDIS_URL = 'redis://li:redis@192.168.110.188:6379'
+REDIS_URL = 'redis://li:redis@192.168.99.91:6379'
 
 IP_PROXY_URL = 'http://192.168.99.175:8000'
 
 COMMANDS_MODULE = 'sina.commands'
+
+STATS_KEYS = ['downloader/request_count',
+        'downloader/response_count',
+        'downloader/response_status_count/200',
+        'item_scraped_count']

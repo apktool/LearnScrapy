@@ -77,8 +77,13 @@ class PersonalFollowItem(Item):
     cards = Field()
     ok = Field()
 
-class PersonalFollowerItem(Item):
+class PersonalFollowersItem(Item):
     _id = Field()
     card_list_info = Field()
     cards = Field()
     ok = Field()
+
+class ErrorRquestItem(Item):
+    _id = Field()
+    response_status = Field()
+    request_url = Field()

@@ -5,7 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: http://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from pymongo import MongoClient
-from .items import HomePageItem, HomePageInfoItem, PersonalInfoItem, PersonalProfileItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowerItem, PersonalWeiboCommentItem
+from .items import HomePageItem, HomePageInfoItem, PersonalInfoItem, PersonalProfileItem, PersonalWeiboItem, PersonalFollowItem, PersonalFollowersItem, PersonalWeiboCommentItem, ErrorRquestItem
 import pymongo
 
 
@@ -51,7 +51,7 @@ class MongoDBPipeline(object):
     def from_crawler(cls, crawler):
         return cls(
             mongo_uri=crawler.settings.get('MONGO_URI'),
-            mongo_db=crawler.settings.get('MONGO_DATABASE', 'Sina')
+            mongo_db=crawler.settings.get('MONGO_DATABASE')
         )
 
     def open_spider(self, spider):
@@ -108,20 +108,28 @@ class MongoDBPipeline(object):
                 print(e.with_traceback)
                 print('PersonalFollowItem is inserted Failed')
 
-        if isinstance(item, PersonalFollowerItem):
+        if isinstance(item, PersonalFollowersItem):
             try:
-                self.db['PersonalFollowerItem'].insert_one(dict(item))
-                print('PersonalFollowerItem is inserted Successfuly')
+                self.db['PersonalFollowersItem'].insert_one(dict(item))
+                print('PersonalFollowersItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
-                print('PersonalFollowerItem is inserted Failed')
+                print('PersonalFollowersItem is inserted Failed')
 
-        if isinstance(item, PersonalFollowerItem):
+        if isinstance(item, PersonalFollowersItem):
             try:
                 self.db['PersonalWeiboCommentItem'].insert_one(dict(item))
                 print('PersonalWeiboCommentItem is inserted Successfuly')
             except Exception as e:
                 print(e.with_traceback)
                 print('PersonalWeiboCommentItem is inserted Failed')
+
+        if isinstance(item, ErrorRquestItem):
+            try:
+                self.db['ErrorRquestItem'].insert_one(dict(item))
+                print('ErrorRquestItem is inserted Successfuly')
+            except Exception as e:
+                print(e.with_traceback)
+                print('ErrorRquestItem is inserted Failed')
 
         return item
