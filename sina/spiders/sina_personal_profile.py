@@ -7,10 +7,13 @@ import json
 
 
 class SinaSpider(RedisSpider):
+    # TODO
+    # The all result can't be got by code, it can be got by browser.
     name = "SinaPersonalProfile"
     redis_key = 'sina_personal_profile:start_urls'
     start_urls = list(set(weibo_id))
-    url = 'https://m.weibo.cn/api/container/getIndex?'
+    basic_url = 'https://m.weibo.cn/api/container/getIndex?'
+    handle_httpstatus_list = [403, 404, 418]
     params = dict()
 
     def start_requests(self):
@@ -21,7 +24,10 @@ class SinaSpider(RedisSpider):
             self.params['luicode'] = '10000011'
             self.params['lfid'] = '230283%d' % uid
             self.params['featurecode'] = '20000320'
-            url = self.url + urlencode(self.params)
+            self.params['type'] = 'uid'
+            self.params['value'] = uid
+            url = self.basic_url + urlencode(self.params)
+            print(url)
             yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_profile)
 
     def parse_personal_profile(self, response):
@@ -30,8 +36,7 @@ class SinaSpider(RedisSpider):
         error_request_item = ErrorRquestItem()
         if response.status == 418 or response.status == 404:
             print(response.url)
-            ids = self.params['luicode'] + '#' + response.url.split('=')[-1]
-            error_request_item['_id'] = ids
+            error_request_item['_id'] = 'profile#%s' % (response.meta.get('uid'))
             error_request_item['response_status'] = response.status
             error_request_item['request_url'] = response.request.url
             yield error_request_item
@@ -41,6 +46,5 @@ class SinaSpider(RedisSpider):
         personal_profile_item = PersonalProfileItem()
         personal_profile_item['_id'] = str(response.meta.get('uid'))
         personal_profile_item['ok'] = jsonresponse.get('ok')
-        personal_profile_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
-        personal_profile_item['cards'] = jsonresponse.get('data').get('cards')
+        personal_profile_item['data'] = jsonresponse.get('data')
         yield personal_profile_item

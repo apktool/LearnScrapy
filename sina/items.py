@@ -55,8 +55,7 @@ class PersonalInfoItem(Item):
 
 class PersonalProfileItem(Item):
     _id = Field()
-    card_list_info = Field()
-    cards = Field()
+    data = Field()
     ok = Field()
 
 class PersonalWeiboItem(Item):
