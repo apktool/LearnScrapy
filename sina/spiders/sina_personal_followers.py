@@ -3,61 +3,54 @@ from scrapy_redis.spiders import RedisSpider
 from sina.items import PersonalFollowersItem, ErrorRquestItem
 from sina.weibo_id import weibo_id
 import json
+
 import pymongo
 from scrapy.utils.project import get_project_settings
+from urllib.parse import urlencode
 
 
 class SinaSpider(RedisSpider):
     name = "SinaPersonalFollowers"
     redis_key = 'sina_personal_followers:start_urls'
     start_urls = list(set(weibo_id))
-    url = 'https://m.weibo.cn/api/container/getIndex?'
+    basic_url = 'https://m.weibo.cn/api/container/getSecond?'
     params = dict()
+    handle_httpstatus_list = [403, 404, 418]
 
-    mongo_uri = str()
-    mongo_db = str()
-    mongo_collection = dict()
-
-    def connect_mongodb(self):
-        settings = get_project_settings()
-        self.mongo_uri = settings.get('MONGO_URI')
-        self.mongo_db = settings.get('MONGO_DATABASE')
-        self.db = pymongo.MongoClient(self.mongo_uri)[self.mongo_db]['PersonalInfoItem']
-        self.mongo_collection = self.db.find()
+    page = 0
+    max_page = 100
 
     def start_requests(self):
-        self.connect_mongodb()
-        for collection in self.mongo_collection:
-            followers_scheme = collection.get('fans_scheme')
-            ids = collection.get('_id')
-            followers_url = followers_scheme.replace('https://m.weibo.cn/p/index?', 'https://m.weibo.cn/api/container/getIndex?').replace('fansrecomm', 'followers')
-            # TODO
-            # follow, follows, follower, followers, fan, fans
-            followers_count = collection.get('user_info').get('followers_count')
-            # Maybe it is error here, followers_count is not amount of followers
+        for uid in self.start_urls:
+            if self.page < self.max_page:
+                self.params.clear()
+                self.params['containerid'] = '100505%d' % uid + '_-_FANS'
+                self.params['page'] = self.page + 1
 
-            for i in range(1, int(followers_count / 20 + 1)):
-                temp = followers_url + '&page=%d' % i
-                yield scrapy.Request(url=temp, meta={'ids': ids}, callback=self.parse_personal_followers)
+                url = self.basic_url + urlencode(self.params)
+                yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_follow)
 
-    def parse_personal_followers(self, response):
+    def parse_personal_follow(self, response):
         self.logger.info('Parse function called on %s', response.url)
 
         error_request_item = ErrorRquestItem()
         if response.status == 418 or response.status == 404:
             print(response.url)
-            ids = self.params['luicode'] + '#' + response.url.split('=')[-1]
-            error_request_item['_id'] = ids
+            error_request_item['_id'] = 'followers#%s#%s' % (response.meta.get('uid'), response.url.split('=')[-1])
             error_request_item['response_status'] = response.status
             error_request_item['request_url'] = response.request.url
             yield error_request_item
             return
 
+        if response.status == 403:
+            print(response.url)
+
         jsonresponse = json.loads(response.body_as_unicode())
         personal_followers_item = PersonalFollowersItem()
-        personal_followers_item['_id'] = str(response.meta.get('ids')) + '#' + str(response.url.split('=')[-1])
-        personal_followers_item['card_list_info'] = jsonresponse.get('data').get('cardlistInfo')
-        personal_followers_item['cards'] = jsonresponse.get('data').get('cards')
-        personal_followers_item['ok'] = jsonresponse.get('data').get('ok')
+        personal_followers_item['_id'] = str(response.meta.get('uid')) + '#' + str(response.url.split('=')[-1])
+        personal_followers_item['data'] = jsonresponse.get('data')
+        personal_followers_item['ok'] = jsonresponse.get('ok')
+
+        self.max_page = jsonresponse.get('data').get('maxPage')
 
         yield personal_followers_item
