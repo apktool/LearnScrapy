@@ -73,8 +73,7 @@ class PersonalWeiboCommentItem(Item):
 
 class PersonalFollowItem(Item):
     _id = Field()
-    card_list_info = Field()
-    cards = Field()
+    data = Field()
     ok = Field()
 
 class PersonalFollowersItem(Item):
