@@ -116,7 +116,7 @@ class MongoDBPipeline(object):
                 print(e.with_traceback)
                 print('PersonalFollowersItem is inserted Failed')
 
-        if isinstance(item, PersonalFollowersItem):
+        if isinstance(item, PersonalWeiboCommentItem,):
             try:
                 self.db['PersonalWeiboCommentItem'].insert_one(dict(item))
                 print('PersonalWeiboCommentItem is inserted Successfuly')
