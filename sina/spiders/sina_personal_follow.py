@@ -14,16 +14,12 @@ class SinaSpider(RedisSpider):
     params = dict()
     handle_httpstatus_list = [403, 404, 418]
 
-    page = 0
-    max_page = 100
-
     def start_requests(self):
         for uid in self.start_urls:
-            if self.page < self.max_page:
-                self.params.clear()
-                self.params['containerid'] = '100505%d' % uid + '_-_FOLLOWERS'
-                self.params['page'] = self.page + 1
-
+            self.params.clear()
+            self.params['containerid'] = '100505%d' % uid + '_-_FOLLOWERS'
+            for page in range(1, 100):
+                self.params['page'] = page
                 url = self.basic_url + urlencode(self.params)
                 yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_follow)
 
@@ -49,6 +45,7 @@ class SinaSpider(RedisSpider):
         personal_follow_item['data'] = jsonresponse.get('data')
         personal_follow_item['ok'] = jsonresponse.get('ok')
 
-        self.max_page = jsonresponse.get('data').get('maxPage')
+        if personal_follow_item['ok'] == 0:
+            return
 
         yield personal_follow_item
