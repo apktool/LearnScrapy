@@ -19,7 +19,7 @@ class SinaSpider(RedisSpider):
     mongo_db = str()
     mongo_collection = dict()
 
-    max_page = 10
+    max_page = 100
 
     def connect_mongodb(self):
         settings = get_project_settings()
@@ -66,6 +66,4 @@ class SinaSpider(RedisSpider):
         if personal_weibo_comment_item['ok'] == 0 or response.url.split('=')[-1] == '':
             return
         
-        self.max_page = jsonresponse.get('data').get('max')
-
         yield personal_weibo_comment_item
