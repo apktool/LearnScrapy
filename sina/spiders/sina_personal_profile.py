@@ -27,7 +27,6 @@ class SinaSpider(RedisSpider):
             self.params['type'] = 'uid'
             self.params['value'] = uid
             url = self.basic_url + urlencode(self.params)
-            print(url)
             yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_profile)
 
     def parse_personal_profile(self, response):

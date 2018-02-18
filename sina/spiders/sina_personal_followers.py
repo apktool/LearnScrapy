@@ -22,7 +22,6 @@ class SinaSpider(RedisSpider):
             for page in range(1, 100):
                 self.params['page'] = page
                 url = self.basic_url + urlencode(self.params)
-                print(url)
                 yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_follow)
 
     def parse_personal_follow(self, response):
