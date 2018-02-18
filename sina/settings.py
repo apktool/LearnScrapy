@@ -112,3 +112,7 @@ STATS_KEYS = ['downloader/request_count',
         'downloader/response_count',
         'downloader/response_status_count/200',
         'item_scraped_count']
+
+DEPTH_PRIORITY = 1
+SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleFifoDiskQueue'
+SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.FifoMemoryQueue'
