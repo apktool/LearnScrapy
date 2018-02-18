@@ -12,19 +12,18 @@ class SinaSpider(RedisSpider):
     start_urls = list(set(weibo_id))
     basic_url = 'https://m.weibo.cn/api/container/getIndex?'
     handle_httpstatus_list = [400, 404, 405, 418]
-    page = 0
     params = dict()
-    stop_flag = False
 
     def start_requests(self):
         for uid in self.start_urls:
-            if self.stop_flag == False:
-                self.params.clear()
-                self.params['type'] = 'uid'
-                self.params['value'] = uid
-                self.params['containerid'] = '107603%d' % uid
-                self.params['page'] = self.page + 1
+            self.params.clear()
+            self.params['type'] = 'uid'
+            self.params['value'] = uid
+            self.params['containerid'] = '107603%d' % uid
+            for page in range(1, 100):
+                self.params['page'] = page
                 url = self.basic_url + urlencode(self.params)
+                print(url)
                 yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_weibo)
 
     def parse_personal_weibo(self, response):
@@ -51,7 +50,6 @@ class SinaSpider(RedisSpider):
         personal_weibo_item['ok'] = jsonresponse.get('ok')
 
         if personal_weibo_item['ok'] == 0:
-            self.stop_flag = True
             return
 
         yield personal_weibo_item
