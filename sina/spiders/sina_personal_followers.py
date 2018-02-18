@@ -4,8 +4,6 @@ from sina.items import PersonalFollowersItem, ErrorRquestItem
 from sina.weibo_id import weibo_id
 import json
 
-import pymongo
-from scrapy.utils.project import get_project_settings
 from urllib.parse import urlencode
 
 
@@ -17,17 +15,14 @@ class SinaSpider(RedisSpider):
     params = dict()
     handle_httpstatus_list = [403, 404, 418]
 
-    page = 0
-    max_page = 100
-
     def start_requests(self):
         for uid in self.start_urls:
-            if self.page < self.max_page:
-                self.params.clear()
-                self.params['containerid'] = '100505%d' % uid + '_-_FANS'
-                self.params['page'] = self.page + 1
-
+            self.params.clear()
+            self.params['containerid'] = '100505%d' % uid + '_-_FANS'
+            for page in range(1, 100):
+                self.params['page'] = page
                 url = self.basic_url + urlencode(self.params)
+                print(url)
                 yield scrapy.Request(url=url, meta={'uid': uid}, callback=self.parse_personal_follow)
 
     def parse_personal_follow(self, response):
@@ -51,6 +46,7 @@ class SinaSpider(RedisSpider):
         personal_followers_item['data'] = jsonresponse.get('data')
         personal_followers_item['ok'] = jsonresponse.get('ok')
 
-        self.max_page = jsonresponse.get('data').get('maxPage')
+        if personal_followers_item['ok'] == 0:
+            return
 
         yield personal_followers_item
